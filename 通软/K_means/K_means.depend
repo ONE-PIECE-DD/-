@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1591774611 source:c:\users\one-piece-d\desktop\程序设计\通软\k_means\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	<math.h>
+

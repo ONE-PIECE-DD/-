@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1591980135 source:c:\users\one-piece-d\desktop\程序设计\通软\对讲机\p2p\p2p\main.c
+	<stdio.h>
+	<stdlib.h>
+	<sys/types.h>
+	<unistd.h>
+	<errno.h>
+	<winsock2.h>
+	<signal.h>
+

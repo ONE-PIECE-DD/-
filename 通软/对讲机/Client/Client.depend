@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1592162344 source:c:\users\one-piece-d\desktop\程序设计\通软\对讲机\client\main.c
+	<winsock2.h>
+	<ws2tcpip.h>
+	<stdio.h>
+	<windows.h>
+	<string.h>
+

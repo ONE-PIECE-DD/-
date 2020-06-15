@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1584720501 source:c:\users\one-piece-d\desktop\第一次实验数据\通软\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<string.h>
+
+1592120887 source:c:\users\one-piece-d\desktop\程序设计\通软\第一次实验数据\通软\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<string.h>
+

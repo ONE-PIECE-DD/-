@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1592165011 source:c:\users\one-piece-d\desktop\程序设计\通软\联机改变cmd属性\控制端\main.c
+	<winsock2.h>
+	<stdio.h>
+

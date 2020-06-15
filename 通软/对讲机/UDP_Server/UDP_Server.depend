@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1592156923 source:c:\users\one-piece-d\desktop\程序设计\通软\对讲机\udp_server\main.c
+	<winsock2.h>
+	<ws2tcpip.h>
+	<stdio.h>
+	<windows.h>
+
