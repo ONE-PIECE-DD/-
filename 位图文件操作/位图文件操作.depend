@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1591795317 source:c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\main.c
+1592142961 source:c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\main.c
 	"bmp.h"
 
-1591803528 c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\bmp.h
+1592142961 c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\bmp.h
 	<stdio.h>
 	<stdlib.h>
 
-1591803528 source:c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\bmp.c
+1592141417 source:c:\users\one-piece-d\desktop\程序设计\通软\位图文件操作\bmp.c
 	"bmp.h"
 

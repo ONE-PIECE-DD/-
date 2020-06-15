@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+//定义布尔变量
 #define true 1
 #define false 0
 typedef int bool;
@@ -50,5 +51,8 @@ typedef struct
 
 ClImage* clLoadImage(const char* path);//载入函数
 bool clSaveImage(const char* path, ClImage* bmpImg);//保存函数
-
+ClImage* clGrayscaleImage(ClImage*);//灰度化
+ClImage* clBinImage(ClImage*);//二值化
+ClImage* clfingernumber(ClImage*);//手指操作
+ClImage* clspan(ClImage*);//旋转
 #endif

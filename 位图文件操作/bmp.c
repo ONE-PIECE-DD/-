@@ -13,7 +13,6 @@ ClImage* clLoadImage(const char* path)
     int step = 0;
     int offset = 0;
     unsigned char pixVal;
-    ClRgbQuad* quad;
     int i, j, k;
 
     bmpImg = (ClImage*)malloc(sizeof(ClImage));
@@ -30,68 +29,8 @@ ClImage* clLoadImage(const char* path)
         //printf("bmp file! \n");
 
         fread(&bmpFileHeader, sizeof(ClBitMapFileHeader), 1, pFile);
-        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
-        printf("bmp文件头信息：\n");
-        printf("文件大小：%d \n", bmpFileHeader.bfSize);
-        printf("保留字：%d \n", bmpFileHeader.bfReserved1);
-        printf("保留字：%d \n", bmpFileHeader.bfReserved2);
-        printf("位图数据偏移字节数：%d \n", bmpFileHeader.bfOffBits);
-
         fread(&bmpInfoHeader, sizeof(ClBitMapInfoHeader), 1, pFile);
-        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
-        printf("bmp文件信息头\n");
-        printf("结构体长度：%d \n", bmpInfoHeader.biSize);
-        printf("位图宽度：%d \n", bmpInfoHeader.biWidth);
-        printf("位图高度：%d \n", bmpInfoHeader.biHeight);
-        printf("位图平面数：%d \n", bmpInfoHeader.biPlanes);
-        printf("颜色位数：%d \n", bmpInfoHeader.biBitCount);
-        printf("压缩方式：%d \n", bmpInfoHeader.biCompression);
-        printf("实际位图数据占用的字节数：%d \n", bmpInfoHeader.biSizeImage);
-        printf("X方向分辨率：%d \n", bmpInfoHeader.biXPelsPerMeter);
-        printf("Y方向分辨率：%d \n", bmpInfoHeader.biYPelsPerMeter);
-        printf("使用的颜色数：%d \n", bmpInfoHeader.biClrUsed);
-        printf("重要颜色数：%d \n", bmpInfoHeader.biClrImportant);
-        printf("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\n");
-
-        if (bmpInfoHeader.biBitCount == 8)
-        {
-            //printf("该文件有调色板，即该位图为非真彩色\n\n");
-            channels = 1;
-            width = bmpInfoHeader.biWidth;
-            height = bmpInfoHeader.biHeight;
-            offset = (channels*width)%4;
-            if (offset != 0)
-            {
-                offset = 4 - offset;
-            }
-            //bmpImg->mat = kzCreateMat(height, width, 1, 0);
-            bmpImg->width = width;
-            bmpImg->height = height;
-            bmpImg->channels = 1;
-            bmpImg->imageData = (unsigned char*)malloc(sizeof(unsigned char)*width*height);
-            step = channels*width;
-
-            quad = (ClRgbQuad*)malloc(sizeof(ClRgbQuad)*256);
-            fread(quad, sizeof(ClRgbQuad), 256, pFile);
-            free(quad);
-
-            for (i=0; i<height; i++)
-            {
-                for (j=0; j<width; j++)
-                {
-                    fread(&pixVal, sizeof(unsigned char), 1, pFile);
-                    bmpImg->imageData[(height-1-i)*step+j] = pixVal;
-                }
-                if (offset != 0)
-                {
-                    for (j=0; j<offset; j++)
-                    {
-                        fread(&pixVal, sizeof(unsigned char), 1, pFile);
-                    }
-                }
-            }
-        }
-        else if (bmpInfoHeader.biBitCount == 24)
+        if (bmpInfoHeader.biBitCount == 24)
         {
             //printf("该位图为位真彩色\n\n");
             channels = 3;
@@ -146,7 +85,6 @@ bool clSaveImage(const char* path, ClImage* bmpImg)
     int offset;//一行填充的数据量（字节）
     unsigned char pixVal = '\0';
     int i, j;
-    ClRgbQuad* quad;//调试板
 
     pFile = fopen(path, "wb");//在path路径对应的文档中记录数据
     if (!pFile)
@@ -156,7 +94,6 @@ bool clSaveImage(const char* path, ClImage* bmpImg)
 
     fileType = 0x4D42;//文件格式
     fwrite(&fileType, sizeof(unsigned short), 1, pFile);//写入两个字节的文件格式
-
 
     //真彩色图的储存
     if (bmpImg->channels == 3)//24位，通道，彩图
@@ -210,60 +147,6 @@ bool clSaveImage(const char* path, ClImage* bmpImg)
             }
         }
     }
-
-    //8色位图的储存
-    else if (bmpImg->channels == 1)//8位，单通道，灰度图
-    {
-        step = bmpImg->width;
-        offset = step%4;
-        if (offset != 4)
-        {
-            step += 4-offset;
-        }
-        bmpFileHeader.bfSize = 54 + 256*4 + bmpImg->width;
-        bmpFileHeader.bfReserved1 = 0;
-        bmpFileHeader.bfReserved2 = 0;
-        bmpFileHeader.bfOffBits = 54 + 256*4;
-        fwrite(&bmpFileHeader, sizeof(ClBitMapFileHeader), 1, pFile);
-        bmpInfoHeader.biSize = 40;
-        bmpInfoHeader.biWidth = bmpImg->width;
-        bmpInfoHeader.biHeight = bmpImg->height;
-        bmpInfoHeader.biPlanes = 1;
-        bmpInfoHeader.biBitCount = 8;
-        bmpInfoHeader.biCompression = 0;
-        bmpInfoHeader.biSizeImage = bmpImg->height*step;
-        bmpInfoHeader.biXPelsPerMeter = 0;
-        bmpInfoHeader.biYPelsPerMeter = 0;
-        bmpInfoHeader.biClrUsed = 256;
-        bmpInfoHeader.biClrImportant = 256;
-        fwrite(&bmpInfoHeader, sizeof(ClBitMapInfoHeader), 1, pFile);
-        quad = (ClRgbQuad*)malloc(sizeof(ClRgbQuad)*256);
-        for (i=0; i<256; i++)
-        {
-            quad[i].rgbBlue = i;
-            quad[i].rgbGreen = i;
-            quad[i].rgbRed = i;
-            quad[i].rgbReserved = 0;
-        }
-        fwrite(quad, sizeof(ClRgbQuad), 256, pFile);
-        free(quad);
-        for (i=bmpImg->height-1; i>-1; i--)
-        {
-            for (j=0; j<bmpImg->width; j++)
-            {
-                pixVal = bmpImg->imageData[i*bmpImg->width+j];
-                fwrite(&pixVal, sizeof(unsigned char), 1, pFile);
-            }
-            if (offset!=0)
-            {
-                for (j=0; j<4-offset; j++)
-                {
-                    pixVal = 0;
-                    fwrite(&pixVal, sizeof(unsigned char), 1, pFile);
-                }
-            }
-        }
-    }
     fclose(pFile);
 
     return true;
@@ -281,7 +164,9 @@ ClImage* clGrayscaleImage(ClImage* bmpImg)
     {
         for (j=0; j<width; j++)
         {
-                Gray=(bmpImg->imageData[i*step+j*3+0]*0.3+bmpImg->imageData[i*step+j*3+1]*0.59+bmpImg->imageData[i*step+j*3+2]*0.11);
+
+                //Gray=(bmpImg->imageData[i*step+j*3+0]*0.3+bmpImg->imageData[i*step+j*3+1]*0.59+bmpImg->imageData[i*step+j*3+2]*0.11);
+                Gray=(bmpImg->imageData[i*step+j*3+0]+bmpImg->imageData[i*step+j*3+1]+bmpImg->imageData[i*step+j*3+2])/3;
                 bmpImg->imageData[i*step+j*3+0]=Gray;
                 bmpImg->imageData[i*step+j*3+1]=Gray;
                 bmpImg->imageData[i*step+j*3+2]=Gray;
@@ -289,7 +174,6 @@ ClImage* clGrayscaleImage(ClImage* bmpImg)
     }
     return bmpImg;
 }
-
 ClImage* clBinImage(ClImage* bmpImg)
 {
     int i,j;
@@ -327,4 +211,46 @@ ClImage* clBinImage(ClImage* bmpImg)
         }
     }
     return bmpImg;
+}
+
+ClImage* clfinger(ClImage* bmpImg)
+{//二值化结果当中手掌部分难以与背景分开，尝试过以手掌部分的像素点为依据进行二值化，但效果不明显
+ //所以被迫终止实验，
+
+ //将手指变细的方案：
+ //纵向压缩图片
+ //判断手掌方向的方案：
+ //不断压缩图片使图片尺寸贴合手掌尺寸，最后根据图片长、宽、亮度分布来判断手掌拜访
+    return bmpImg;
+}
+
+ClImage* clspan(ClImage* bmpImg)
+{
+    ClImage* bmpImg1;
+    bmpImg1 = (ClImage*)malloc(sizeof(ClImage));
+    int i,j,m,n;
+    int width = bmpImg->width;
+    int height = bmpImg->height;
+    int width1 = height;
+    int height1 = width;
+    bmpImg1->height=height1;
+    bmpImg1->width=width1;
+    bmpImg1->channels=bmpImg->channels;
+    int step = bmpImg->channels*width;
+    int step1 = bmpImg1->channels*width1;
+    bmpImg1->imageData = (unsigned char*)malloc(sizeof(unsigned char)*width1*3*height1);
+    n=width1-1;//列
+    for (i=0; i<height; i++)//行
+    {
+        m=0;//行
+        for (j=0; j<width; j++)//列
+        {//通过巧妙的计算实现行列转换
+            bmpImg1->imageData[m*step1+n*3+0]=bmpImg->imageData[i*step+j*3+0];
+            bmpImg1->imageData[m*step1+n*3+1]=bmpImg->imageData[i*step+j*3+1];
+            bmpImg1->imageData[m*step1+n*3+2]=bmpImg->imageData[i*step+j*3+2];
+            m++;
+        }
+        n--;
+    }
+    return bmpImg1;
 }
